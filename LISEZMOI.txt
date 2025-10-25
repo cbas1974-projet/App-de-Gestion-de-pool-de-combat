@@ -1,0 +1,69 @@
+========================================
+   APPLICATION DE GESTION DE POOL DE COMBAT
+========================================
+
+COMMENT UTILISER CETTE APPLICATION
+===================================
+
+PREMIERE UTILISATION :
+----------------------
+
+1. Assurez-vous d'avoir Node.js installé sur votre PC
+   - Si ce n'est pas le cas, téléchargez-le sur : https://nodejs.org
+   - Prenez la version LTS (recommandée)
+
+2. Double-cliquez sur "INSTALLER.bat"
+   - Attendez que l'installation se termine (quelques minutes)
+
+3. C'est tout ! L'installation est terminée.
+
+
+LANCER L'APPLICATION :
+---------------------
+
+Double-cliquez simplement sur "LANCER.bat"
+
+L'application va :
+- Démarrer automatiquement
+- Ouvrir votre navigateur web
+- Afficher l'interface de gestion de pool de combat
+
+Pour arrêter l'application :
+- Fermez la fenêtre noire (terminal)
+- OU appuyez sur Ctrl+C dans le terminal
+
+
+FONCTIONNALITES :
+----------------
+
+✓ Gestion des combattants (ajout, suppression)
+✓ Validation automatique (âge, poids, grade)
+✓ Alarmes sonores si les limites sont dépassées
+✓ Création de pools de combat (2, 3 ou 4 combats minimum)
+✓ 2 pools peuvent être actifs en même temps (pauses pour les combattants)
+✓ Timer de combat avec cloche de boxe
+✓ Attribution automatique des médailles (Or, Argent, Bronze)
+✓ Sauvegarde automatique de toutes les données
+
+
+PROBLEMES COURANTS :
+-------------------
+
+Q: Le fichier LANCER.bat ne fonctionne pas
+R: Installez d'abord Node.js depuis https://nodejs.org
+
+Q: L'application ne s'ouvre pas dans le navigateur
+R: Ouvrez manuellement votre navigateur et allez à : http://localhost:5173
+
+Q: Je veux réinstaller
+R: Supprimez le dossier "node_modules" et relancez INSTALLER.bat
+
+
+SUPPORT :
+---------
+
+Pour toute question, consultez le fichier README.md (en anglais)
+ou visitez : https://github.com/anthropics/claude-code
+
+
+Bonne gestion de vos pools de combat ! 🥊

@@ -41,10 +41,26 @@ Application de bureau pour la gestion de compétitions de combat avec système d
 - Interface responsive
 - Sauvegarde automatique dans le navigateur
 
-## Installation et Lancement
+## 🚀 Lancement Rapide (Recommandé)
+
+### Pour Windows
+1. **Première fois:** Double-cliquez sur `INSTALLER.bat`
+2. **Ensuite:** Double-cliquez simplement sur `LANCER.bat`
+
+### Pour Linux/Mac
+1. Ouvrez un terminal dans ce dossier
+2. Lancez: `./lancer.sh`
+
+L'application s'ouvrira automatiquement dans votre navigateur !
+
+📖 **Instructions détaillées:** Consultez le fichier `LISEZMOI.txt`
+
+---
+
+## Installation et Lancement (Méthode Avancée)
 
 ### Prérequis
-- Node.js 16+ et npm
+- Node.js 16+ et npm (téléchargez sur https://nodejs.org)
 
 ### Installation des dépendances
 ```bash
