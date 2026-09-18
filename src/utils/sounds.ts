@@ -3,7 +3,41 @@ export class BellSound {
   private audioContext: AudioContext;
 
   constructor() {
-    this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const Contexte =
+      window.AudioContext ||
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    this.audioContext = new Contexte();
+  }
+
+  // Les navigateurs bloquent l'audio tant qu'un geste utilisateur n'a pas
+  // « débloqué » le contexte : à appeler dans un gestionnaire de clic.
+  unlock(): void {
+    if (this.audioContext.state === 'suspended') {
+      void this.audioContext.resume();
+    }
+  }
+
+  // Bip court pour guider le tempo (montée / descente) ou annoncer le départ
+  playTick(type: 'monte' | 'descend' | 'pret' = 'pret'): void {
+    const now = this.audioContext.currentTime;
+    const frequence = type === 'monte' ? 880 : type === 'descend' ? 440 : 660;
+    const duree = type === 'pret' ? 0.12 : 0.08;
+
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequence, now);
+
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.2, now + 0.01);
+    gainNode.gain.linearRampToValueAtTime(0, now + duree);
+
+    oscillator.start(now);
+    oscillator.stop(now + duree);
   }
 
   // Son de cloche pour début/fin de round
