@@ -45,6 +45,25 @@ FONCTIONNALITES :
 ✓ Attribution automatique des médailles (Or, Argent, Bronze)
 ✓ Sauvegarde automatique de toutes les données
 
+✓ Entraînement aux haltères pour le pratiquant de jiu-jitsu
+✓ Création de séances personnalisées (durée, niveau, objectif, format)
+✓ 40 exercices du poster avec images, points d'attention et intérêt pour le JJB
+✓ Séance guidée avec métronome et comptage automatique des répétitions
+✓ Historique des séances avec statistiques (durée, poids, séries)
+✓ Bibliothèque des exercices classée par zone musculaire
+
+
+S'ENTRAÎNER :
+----------
+
+L'onglet « Entraînement » vous permet de créer et de suivre vos séances aux haltères.
+Choisissez la durée (5 à 45 minutes), votre niveau et vos objectifs, et l'application
+génère une séance adaptée avec les 40 exercices du poster. Lancez la séance guidée :
+l'application rythme votre tempo avec un métronome, compte vos répétitions, et gère
+les repos. À chaque exercice, entrez le poids utilisé. Votre séance est enregistrée
+automatiquement avec tous les détails (durée réelle, séries, poids). Consultez votre
+historique et la bibliothèque complète des exercices avec leurs bénéfices pour le jiu-jitsu.
+
 
 PROBLEMES COURANTS :
 -------------------

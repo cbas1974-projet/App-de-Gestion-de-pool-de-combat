@@ -35,6 +35,51 @@ Application de bureau pour la gestion de compétitions de combat avec système d
 - Indication du round actuel
 - Distinction visuelle combat/repos
 
+### Entraînement (Haltères)
+Pour le pratiquant de jiu-jitsu qui s'entraîne aux haltères, utilisable au téléphone :
+
+**Nouvelle séance**
+- Choix de la durée (5, 10, 15, 20, 30 ou 45 minutes)
+- Objectif : Corps entier, Haut du corps, Bas du corps, Gainage, Dos
+- Niveau : Débutant, Intermédiaire, Avancé
+- Format : Séries (répétitions avec repos chronométré), Circuit (stations au temps), Mixte
+- Tempo personnalisable (5 s / 5 s recommandé pour protéger tendons et ligaments, 3 s / 3 s, 2 s / 4 s)
+- Options : « J'ai un banc ou une marche solide » (6 exercices additionnels), « Inclure les mouvements explosifs »
+- Réglages mémorisés
+
+**Séance proposée**
+- Génération automatique des exercices avec variation des zones et groupes musculaires
+- Calcul de l'échauffement, séries, répétitions, repos et retour au calme
+- Image de chaque exercice (vignette du poster « Dumbbell Workouts »)
+- Points d'attention et intérêt pour le jiu-jitsu
+- Boutons : Remplacer (autre exercice de la même zone), Regénérer, Lancer la séance
+
+**Séance guidée (plein écran)**
+- Échauffement articulaire guidé
+- Pour chaque série : compte à rebours « Préparez-vous », métronome avec MONTE / DESCENDS
+- Affichage des secondes et comptage des répétitions automatique
+- Côté droit puis côté gauche pour les exercices unilatéraux
+- Bips de montée / descente, cloche de fin de série
+- Repos chronométré avec aperçu de l'exercice suivant et bouton « +15 s »
+- Boutons Pause, Précédent, Suivant, « Série terminée », « Passer l'exercice »
+- Saisie du poids utilisé
+- Retour au calme avec étirements guidés
+- Écran de fin avec récapitulatif
+- L'écran reste allumé pendant la séance (si le navigateur le permet)
+- Reprise de séance après rechargement de page
+
+**Historique**
+- Chaque séance enregistrée : date, durée réelle et prévue
+- Par exercice : séries faites, temps passé, poids
+- Statistiques : nombre de séances, temps total, 7 derniers jours
+- Suppression possible
+- Sauvegarde dans le navigateur
+
+**Bibliothèque**
+- Les 40 exercices du poster classés par zone
+- Image, muscles, matériel, niveau, points d'attention
+- Bouton « Voir le poster complet »
+
 ### Interface
 - Design minimaliste et moderne
 - Navigation par onglets
@@ -80,6 +125,13 @@ npm run build
 ```
 
 Les fichiers de production seront générés dans le dossier `dist/`.
+
+### Lancer les tests
+```bash
+npm test
+```
+
+Les tests unitaires couvrent le générateur de séances et la machine à étapes de la séance guidée.
 
 ## Créer une Application PC de Bureau
 
@@ -198,12 +250,36 @@ Une fois tous les combats terminés, le podium s'affiche avec:
 - Médaille d'argent pour le deuxième
 - Médaille de bronze pour le troisième
 
+### 6. S'entraîner (Onglet Entraînement)
+1. Accédez à l'onglet "Entraînement"
+2. Dans "Nouvelle séance":
+   - Choisissez la durée (5 à 45 minutes)
+   - Sélectionnez l'objectif (Corps entier, Haut, Bas, Gainage, Dos)
+   - Indiquez votre niveau (Débutant, Intermédiaire, Avancé)
+   - Choisissez le format (Séries, Circuit ou Mixte)
+   - Réglez le tempo recommandé (5 s / 5 s pour protéger vos tendons)
+   - Cochez les options si vous avez un banc ou voulez des mouvements explosifs
+3. Dans "Séance proposée":
+   - L'application génère les exercices
+   - Consultez les points d'attention et l'intérêt pour le jiu-jitsu
+   - Utilisez "Remplacer" pour changer un exercice, "Regénérer" pour une nouvelle combinaison
+   - Cliquez sur "Lancer la séance"
+4. Pendant la "Séance guidée":
+   - L'application guide votre tempo avec un métronome
+   - Suivez les affichages MONTE / DESCENDS
+   - Utilisez les boutons Pause, Précédent, Suivant
+   - Saisissez le poids utilisé à chaque exercice
+   - Terminez par les étirements de retour au calme
+5. L'historique enregistre automatiquement votre séance avec les détails (durée, poids, séries)
+6. Consultez la "Bibliothèque" pour explorer les 40 exercices avec leurs images et détails
+
 ## Technologies Utilisées
 
-- **React 18** - Framework UI
+- **React 19** - Framework UI
 - **TypeScript** - Typage statique
 - **Vite** - Build tool
-- **TailwindCSS** - Framework CSS
+- **TailwindCSS 4** - Framework CSS
+- **Vitest** - Tests unitaires
 - **Web Audio API** - Génération de sons
 - **LocalStorage** - Sauvegarde des données
 
@@ -211,18 +287,77 @@ Une fois tous les combats terminés, le podium s'affiche avec:
 
 ```
 src/
-├── components/          # Composants React
-│   ├── FighterManager.tsx  # Gestion des combattants
-│   ├── PoolManager.tsx     # Gestion d'un pool
-│   └── Timer.tsx           # Timer de combat
-├── utils/              # Utilitaires
-│   ├── storage.ts         # Sauvegarde locale
-│   ├── validation.ts      # Validation des combattants
-│   └── sounds.ts          # Génération de sons
-├── types.ts            # Types TypeScript
-├── App.tsx             # Composant principal
-└── index.css           # Styles globaux
+├── components/                    # Composants React
+│   ├── FighterManager.tsx        # Gestion des combattants
+│   ├── PoolManager.tsx           # Gestion d'un pool
+│   ├── Timer.tsx                 # Timer de combat
+│   ├── Entrainement.tsx          # Onglet entraînement
+│   ├── SeanceGuidee.tsx          # Séance guidée (plein écran)
+│   ├── FicheExercice.tsx         # Fiche détail d'un exercice
+│   ├── HistoriqueEntrainement.tsx # Historique des séances
+│   └── BibliothequeExercices.tsx # Bibliothèque des 40 exercices
+├── data/                         # Données statiques
+│   ├── exercices.ts             # Les 40 exercices du poster
+│   └── parametres.ts            # Durées, tempos, niveaux, formats
+├── utils/                        # Utilitaires
+│   ├── storage.ts               # Sauvegarde locale
+│   ├── validation.ts            # Validation des combattants
+│   ├── sounds.ts                # Génération de sons
+│   ├── generateurSeance.ts      # Génération de séances d'entraînement
+│   ├── etapesSeance.ts          # Étapes de la séance guidée
+│   └── formatage.ts             # Formatage (dates, durées, etc.)
+├── hooks/                        # Hooks React
+│   ├── useMoteurEtapes.ts       # Moteur de temps de la séance guidée
+│   └── useVerrouEcran.ts        # Garde l’écran allumé pendant la séance
+├── types.ts                      # Types TypeScript
+├── App.tsx                       # Composant principal
+└── index.css                     # Styles globaux
+
+public/
+├── exercices/                    # Images des exercices
+│   ├── hammer-curl.png
+│   ├── [37 autres exercices]
+│   ├── woodchop.png
+│   └── _poster.jpg              # Poster complet
+
+scripts/
+└── decouper_poster.py           # Script de découpe du poster
 ```
+
+## Images des Exercices
+
+Les images des 40 exercices proviennent d'un poster du commerce « Dumbbell Workouts » et sont découpées automatiquement à partir d'une photo ou d'un scan.
+
+### Découper le poster
+Pour générer les vignettes à partir d'une image du poster :
+
+**Dépendances :**
+```bash
+pip install pillow
+```
+
+**Utilisation :**
+```bash
+python3 scripts/decouper_poster.py <image_du_poster> [--sortie public/exercices] [--debug]
+```
+
+Exemple :
+```bash
+python3 scripts/decouper_poster.py photo_du_poster.jpg --sortie public/exercices
+```
+
+Le script :
+1. Repère les bandes bleues du poster (titre, en-têtes, pied)
+2. En déduit la grille de 5 colonnes
+3. Découpe chaque case et retire le libellé anglais
+4. Enregistre les PNG des 40 exercices (nommés selon `src/data/exercices.ts`)
+5. Enregistre aussi le poster complet recadré (`_poster.jpg`)
+
+### Améliorer la résolution
+Pour des vignettes plus nettes, relancez simplement le script avec une image de meilleure résolution (photo de meilleure qualité ou scan plus précis). Les fichiers existants seront remplacés et l'application les prendra en compte au prochain lancement.
+
+### Remplacer une image
+Vous pouvez également remplacer directement un fichier PNG par votre propre photo en gardant le nom de fichier (ex. : `public/exercices/hammer-curl.png`).
 
 ## Licence
 
