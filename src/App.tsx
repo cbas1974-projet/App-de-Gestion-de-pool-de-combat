@@ -3,10 +3,13 @@ import type { AppState, Fighter, Pool, ValidationRules } from './types';
 import { loadState, saveState } from './utils/storage';
 import FighterManager from './components/FighterManager';
 import PoolManager from './components/PoolManager';
+import Entrainement from './components/Entrainement';
 
 function App() {
   const [appState, setAppState] = useState<AppState>(loadState());
-  const [activeTab, setActiveTab] = useState<'fighters' | 'pools'>('fighters');
+  const [activeTab, setActiveTab] = useState<'fighters' | 'pools' | 'entrainement'>(
+    'fighters'
+  );
 
   // Sauvegarder automatiquement l'état
   useEffect(() => {
@@ -116,10 +119,10 @@ function App() {
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex gap-4">
+          <div className="flex gap-1 sm:gap-4 overflow-x-auto">
             <button
               onClick={() => setActiveTab('fighters')}
-              className={`px-4 py-3 font-medium transition-colors border-b-2 ${
+              className={`px-3 sm:px-4 py-3 text-sm sm:text-base font-medium transition-colors border-b-2 whitespace-nowrap ${
                 activeTab === 'fighters'
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
@@ -129,13 +132,23 @@ function App() {
             </button>
             <button
               onClick={() => setActiveTab('pools')}
-              className={`px-4 py-3 font-medium transition-colors border-b-2 ${
+              className={`px-3 sm:px-4 py-3 text-sm sm:text-base font-medium transition-colors border-b-2 whitespace-nowrap ${
                 activeTab === 'pools'
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
-              Pools de Combat ({appState.pools.length})
+              Pools<span className="hidden sm:inline"> de Combat</span> ({appState.pools.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('entrainement')}
+              className={`px-3 sm:px-4 py-3 text-sm sm:text-base font-medium transition-colors border-b-2 whitespace-nowrap ${
+                activeTab === 'entrainement'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Entraînement
             </button>
           </div>
         </div>
@@ -261,6 +274,15 @@ function App() {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === 'entrainement' && (
+          <Entrainement
+            etat={appState.entrainement}
+            onChange={(fn) =>
+              setAppState((prev) => ({ ...prev, entrainement: fn(prev.entrainement) }))
+            }
+          />
         )}
       </main>
 

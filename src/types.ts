@@ -102,6 +102,10 @@ export interface Exercice {
    *  exclu tant que l'option « explosifs » n'est pas activée. */
   explosif?: boolean;
   position: string;
+  /** Phase par laquelle commence chaque répétition : 'descend' pour les
+   *  mouvements qui partent de la position haute (squat, fente, développé
+   *  couché…), 'monte' sinon (valeur par défaut). */
+  premierePhase?: 'monte' | 'descend';
   pointsAttention: string[];
   /** Pourquoi l'exercice est utile pour le jiu-jitsu (facultatif). */
   interetJjb?: string;
@@ -182,6 +186,8 @@ export interface ProgressionSeance {
   tempsParEtapeSec: number[];
   poids: Record<string, number>;
   demarreeLe: string;
+  /** Dernière sauvegarde (ISO), pour le bandeau de reprise. */
+  sauvegardeeLe?: string;
 }
 
 export interface EntrainementState {

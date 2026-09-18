@@ -94,6 +94,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Haltère tenu à deux mains, coudes serrés pointés vers le plafond.',
@@ -211,6 +212,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 2,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Allongé sur le banc',
     pointsAttention: [
       'Un seul haltère tenu à deux mains au-dessus de la poitrine.',
@@ -230,6 +232,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Allongé sur le banc',
     pointsAttention: [
       'Omoplates serrées, pieds bien à plat au sol.',
@@ -249,6 +252,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Allongé, banc incliné à 30-45°',
     pointsAttention: [
       'Dos plaqué contre le dossier, omoplates serrées.',
@@ -268,6 +272,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Allongé sur le banc',
     pointsAttention: [
       'Coudes légèrement fléchis et fixes : le mouvement vient des épaules.',
@@ -309,6 +314,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'unilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Un seul haltère, main libre derrière la tête.',
@@ -328,6 +334,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 2,
     cotes: 'alterne',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Haltère tenu à deux mains au-dessus de la tête, bras tendus.',
@@ -507,6 +514,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Pieds largeur d’épaules, genoux dans l’axe des pieds.',
@@ -527,6 +535,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Haltère tenu à la verticale contre la poitrine, coudes vers le bas.',
@@ -546,6 +555,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 1,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout, pieds écartés',
     pointsAttention: [
       'Pieds larges, pointes tournées vers l’extérieur.',
@@ -566,6 +576,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 3,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     explosif: true,
     position: 'Debout',
     pointsAttention: [
@@ -586,6 +597,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 2,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Dos plat du début à la fin, omoplates serrées.',
@@ -626,6 +638,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 2,
     cotes: 'alterne',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Grand pas en arrière, buste droit.',
@@ -645,6 +658,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 2,
     cotes: 'alterne',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Grand pas sur le côté, jambe opposée tendue et pied à plat.',
@@ -766,6 +780,7 @@ export const EXERCICES: Exercice[] = [
     niveauMin: 2,
     cotes: 'bilateral',
     unite: 'reps',
+    premierePhase: 'descend',
     position: 'Debout',
     pointsAttention: [
       'Haltères aux épaules, coudes vers l’avant.',
