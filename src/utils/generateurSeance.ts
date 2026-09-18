@@ -51,8 +51,8 @@ const REGLAGES: Record<Niveau, ReglagesNiveau> = {
     travailSec: 30,
     reposStationSec: 30,
     stationsMin: 4,
-    stationsMax: 5,
-    toursMax: 3,
+    stationsMax: 6,
+    toursMax: 5,
   },
   intermediaire: {
     reps: [8, 10],
@@ -64,7 +64,7 @@ const REGLAGES: Record<Niveau, ReglagesNiveau> = {
     reposStationSec: 20,
     stationsMin: 4,
     stationsMax: 6,
-    toursMax: 4,
+    toursMax: 5,
   },
   avance: {
     reps: [8, 10, 12],
@@ -74,11 +74,35 @@ const REGLAGES: Record<Niveau, ReglagesNiveau> = {
     tenueSec: 45,
     travailSec: 50,
     reposStationSec: 20,
-    stationsMin: 5,
+    stationsMin: 4,
     stationsMax: 6,
     toursMax: 5,
   },
 };
+
+/** Au-delà de cette durée, les bornes du niveau s'appliquent telles quelles. */
+const SEANCE_COURTE_MIN = 10;
+
+/** Sur une séance courte, une seule série par exercice est autorisée : mieux
+ *  vaut trois exercices en une série qu'un seul exercice en trois séries. */
+const SERIES_MINI_COURTE = 1;
+
+/** Sur une séance courte, un circuit peut descendre à trois stations. */
+const STATIONS_MINI_COURTE = 3;
+
+/** Réglages appliqués à une séance : ceux du niveau, assouplis quand la
+ *  séance est courte. */
+function reglagesEffectifs(parametres: ParametresSeance): ReglagesNiveau {
+  const base = REGLAGES[parametres.niveau];
+  if (parametres.dureeMinutes > SEANCE_COURTE_MIN) return base;
+  return {
+    ...base,
+    series: base.series.includes(SERIES_MINI_COURTE)
+      ? base.series
+      : [SERIES_MINI_COURTE, ...base.series],
+    stationsMin: Math.min(base.stationsMin, STATIONS_MINI_COURTE),
+  };
+}
 
 /** Niveau maximal des exercices acceptés pour chaque niveau de pratiquant. */
 const NIVEAU_MAX: Record<Niveau, number> = { debutant: 1, intermediaire: 2, avance: 3 };
@@ -355,7 +379,7 @@ export function exercicesDisponibles(parametres: ParametresSeance): Exercice[] {
 export function genererSeance(parametres: ParametresSeance, graine?: number): Seance {
   const graineUtilisee = (graine ?? Date.now()) >>> 0;
   const alea = creerAleatoire(graineUtilisee);
-  const reglages = REGLAGES[parametres.niveau];
+  const reglages = reglagesEffectifs(parametres);
   const echauffement = echauffementSec(parametres.dureeMinutes);
   const retourCalme = retourCalmeSec(parametres.dureeMinutes);
   const budget = Math.max(0, parametres.dureeMinutes * 60 - echauffement - retourCalme);
@@ -436,7 +460,7 @@ export function remplacerExercice(seance: Seance, exerciceId: string, graine?: n
 
   const alea = creerAleatoire((graine ?? Date.now()) >>> 0);
   const remplacant = tirer(alternatives, alea);
-  const reglages = REGLAGES[seance.parametres.niveau];
+  const reglages = reglagesEffectifs(seance.parametres);
 
   const blocs = seance.blocs.map((bloc) =>
     bloc.exerciceId === exerciceId

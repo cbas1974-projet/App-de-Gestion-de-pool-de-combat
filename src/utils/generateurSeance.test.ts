@@ -16,13 +16,15 @@ import {
 /** Graine fixe : les tests doivent être reproductibles. */
 const GRAINE = 20240918;
 
-/** Bornes de circuit par niveau, recopiées du générateur pour vérifier
- *  qu'un circuit qui ne remplit pas le budget est bien maximal. */
-const BORNES_CIRCUIT: Record<Niveau, { stationsMin: number; stationsMax: number; toursMax: number }> = {
-  debutant: { stationsMin: 4, stationsMax: 5, toursMax: 3 },
-  intermediaire: { stationsMin: 4, stationsMax: 6, toursMax: 4 },
-  avance: { stationsMin: 5, stationsMax: 6, toursMax: 5 },
-};
+/** Bornes de circuit recopiées du générateur, pour vérifier qu'un circuit qui
+ *  ne remplit pas le budget est bien maximal. Elles sont les mêmes pour les
+ *  trois niveaux ; seules les séances courtes descendent à 3 stations. */
+const STATIONS_MAX = 6;
+const TOURS_MAX = 5;
+
+function stationsMin(parametres: ParametresSeance): number {
+  return parametres.dureeMinutes <= 10 ? 3 : 4;
+}
 
 function avec(modifications: Partial<ParametresSeance>): ParametresSeance {
   return { ...PARAMETRES_PAR_DEFAUT, ...modifications };
@@ -48,15 +50,14 @@ function budgetTravailSec(seance: Seance): number {
 function circuitEstMaximal(seance: Seance): boolean {
   const circuit = seance.circuit;
   if (!circuit) return false;
-  const bornes = BORNES_CIRCUIT[seance.parametres.niveau];
   const budget = budgetTravailSec(seance);
   const restant = budget - seance.blocs.reduce((somme, bloc) => somme + coutBlocTest(bloc, seance), 0);
   const parStation = circuit.travailSec + circuit.reposSec;
   const cout = coutCircuit(circuit);
   const avecUneStation =
-    circuit.stations.length < bornes.stationsMax ? cout + circuit.tours * parStation : Infinity;
+    circuit.stations.length < STATIONS_MAX ? cout + circuit.tours * parStation : Infinity;
   const avecUnTour =
-    circuit.tours < bornes.toursMax
+    circuit.tours < TOURS_MAX
       ? cout + circuit.stations.length * parStation + circuit.reposEntreToursSec
       : Infinity;
   return avecUneStation > restant && avecUnTour > restant;
@@ -65,19 +66,6 @@ function circuitEstMaximal(seance: Seance): boolean {
 function coutBlocTest(bloc: BlocSeries, seance: Seance): number {
   const exercice = EXERCICES_PAR_ID[bloc.exerciceId];
   return bloc.series * (dureeSerieSec(exercice, bloc.reps, seance.parametres.tempo) + bloc.reposSec);
-}
-
-/** Plancher incompressible d'un circuit : même le tour minimal au nombre
- *  minimal de stations peut dépasser une séance très courte. */
-function plancherCircuitSec(seance: Seance): number {
-  const circuit = seance.circuit;
-  if (!circuit || seance.parametres.format !== 'circuit') return 0;
-  const bornes = BORNES_CIRCUIT[seance.parametres.niveau];
-  return (
-    seance.echauffementSec +
-    seance.retourCalmeSec +
-    bornes.stationsMin * (circuit.travailSec + circuit.reposSec)
-  );
 }
 
 function minSec(sec: number): string {
@@ -149,7 +137,14 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
           // Le format est respecté.
           if (format.id === 'circuit') {
             expect(seance.blocs).toHaveLength(0);
-            expect(seance.circuit).not.toBeNull();
+            const circuit = seance.circuit;
+            expect(circuit).not.toBeNull();
+            expect(circuit!.stations.length).toBeGreaterThanOrEqual(stationsMin(parametres));
+            expect(circuit!.stations.length).toBeLessThanOrEqual(STATIONS_MAX);
+            expect(circuit!.tours).toBeGreaterThanOrEqual(1);
+            expect(circuit!.tours).toBeLessThanOrEqual(TOURS_MAX);
+            // Ni une station ni un tour de plus ne tiendrait dans le budget.
+            expect(circuitEstMaximal(seance)).toBe(true);
           } else {
             expect(seance.blocs.length).toBeGreaterThan(0);
           }
@@ -184,18 +179,13 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
         it(`${titre} : tient dans la durée demandée`, () => {
           const seance = genererSeance(parametres, GRAINE);
           const tolerance = dureeMinutes <= 5 ? 90 : 60;
-          const plafond = Math.max(dureeMinutes * 60 + tolerance, plancherCircuitSec(seance));
-          expect(seance.dureeEstimeeSec).toBeLessThanOrEqual(plafond);
+          expect(seance.dureeEstimeeSec).toBeLessThanOrEqual(dureeMinutes * 60 + tolerance);
         });
 
         if (dureeMinutes >= 15) {
           it(`${titre} : remplit la durée demandée`, () => {
             const seance = genererSeance(parametres, GRAINE);
-            const plancher = 0.7 * dureeMinutes * 60;
-            // Au format circuit, la granularité d'une station peut laisser un
-            // trou : on vérifie alors que le circuit est déjà maximal.
-            const remplit = seance.dureeEstimeeSec >= plancher || circuitEstMaximal(seance);
-            expect(remplit).toBe(true);
+            expect(seance.dureeEstimeeSec).toBeGreaterThanOrEqual(0.7 * dureeMinutes * 60);
           });
         }
       }
@@ -234,6 +224,63 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
 
     const dos = genererSeance(avec({ objectif: 'dos', dureeMinutes: 45, niveau: 'avance' }), GRAINE);
     expect(EXERCICES_PAR_ID[identifiantsSeance(dos)[0]].zone).toBe('dos');
+  });
+
+  it('privilégie plusieurs exercices en une série sur les séances courtes', () => {
+    // 10 min intermédiaire : trois exercices en une série valent mieux qu'un
+    // seul exercice en trois séries.
+    const seance = genererSeance(
+      avec({ dureeMinutes: 10, niveau: 'intermediaire', format: 'series' }),
+      GRAINE,
+    );
+    expect(seance.blocs).toHaveLength(3);
+    expect(seance.blocs.every((bloc) => bloc.series === 1)).toBe(true);
+    expect(seance.dureeEstimeeSec).toBe(600);
+
+    // Une seule série est autorisée à tous les niveaux jusqu'à 10 min.
+    for (const niveau of NIVEAUX) {
+      for (const dureeMinutes of [5, 10]) {
+        const courte = genererSeance(
+          avec({ dureeMinutes, niveau: niveau.id, format: 'series' }),
+          GRAINE,
+        );
+        expect(courte.blocs[0].series).toBe(1);
+      }
+    }
+  });
+
+  it('garde le volume du niveau au-delà de 10 min', () => {
+    const seriesMini: Record<Niveau, number> = { debutant: 2, intermediaire: 2, avance: 3 };
+    for (const niveau of NIVEAUX) {
+      for (const dureeMinutes of [15, 20, 30, 45]) {
+        const seance = genererSeance(
+          avec({ dureeMinutes, niveau: niveau.id, format: 'series' }),
+          GRAINE,
+        );
+        expect(seance.blocs[0].series).toBeGreaterThanOrEqual(seriesMini[niveau.id]);
+      }
+    }
+  });
+
+  it('descend à trois stations pour tenir dans une séance courte en circuit', () => {
+    for (const niveau of NIVEAUX) {
+      const seance = genererSeance(
+        avec({ dureeMinutes: 5, niveau: niveau.id, format: 'circuit' }),
+        GRAINE,
+      );
+      expect(seance.circuit?.stations.length).toBe(3);
+      expect(seance.dureeEstimeeSec).toBeLessThanOrEqual(300);
+    }
+  });
+
+  it('remplit un circuit de 45 min au niveau débutant', () => {
+    const seance = genererSeance(
+      avec({ dureeMinutes: 45, niveau: 'debutant', format: 'circuit' }),
+      GRAINE,
+    );
+    expect(seance.dureeEstimeeSec).toBeGreaterThanOrEqual(0.7 * 45 * 60);
+    expect(seance.circuit?.tours).toBe(5);
+    expect(seance.circuit?.stations).toHaveLength(6);
   });
 
   it('donne aux exercices au temps une tenue en secondes propre au niveau', () => {
