@@ -41,6 +41,15 @@ for (const url of urls) {
     console.log(`--- ${url}`);
     console.log(`    statut ${statut}, type ${type}, html ${etat.html} car., titre « ${etat.titre} », root ${etat.racine} enfant(s), scripts ${etat.scripts} (modules ${etat.modules}), images intégrées ${etat.imagesIntegrees}`);
     console.log(`    texte : ${etat.texte}`);
+    // githack affiche un avertissement « External Content Notice » avec un
+    // bouton « Open the page » au premier passage : on le franchit.
+    const ouvrir = page.getByRole('button', { name: /Open the page/i });
+    if (await ouvrir.count()) {
+      await ouvrir.click();
+      await page.waitForLoadState('load');
+      await page.waitForTimeout(3000);
+      console.log('    avertissement githack franchi, url :', page.url());
+    }
     await page.getByRole('button', { name: /Entraînement/ }).click({ timeout: 20000 });
     await page.getByRole('button', { name: /Générer la séance/ }).click({ timeout: 15000 });
     await page.waitForTimeout(800);
