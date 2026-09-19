@@ -16,10 +16,10 @@ permissions:
 
 env:
   URLS: >-
-    https://rawcdn.githack.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/9a74c61429cac79e826ef65e6aa3ccdd691d67c8/SGtraining.html
+    https://raw.githack.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/gh-pages/index.html
     https://raw.githack.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/publication/SGtraining.html
-    https://cdn.jsdelivr.net/gh/cbas1974-projet/App-de-Gestion-de-pool-de-combat@publication/SGtraining.html
-    https://cdn.statically.io/gh/cbas1974-projet/App-de-Gestion-de-pool-de-combat/publication/SGtraining.html
+    https://rawcdn.githack.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/49b5464357071350bebdee068dfe7d1b8631bd22/SGtraining.html
+    https://htmlpreview.github.io/?https://raw.githubusercontent.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/publication/SGtraining.html
     https://cbas1974-projet.github.io/App-de-Gestion-de-pool-de-combat/
 
 jobs:
