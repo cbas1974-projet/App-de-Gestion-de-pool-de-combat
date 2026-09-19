@@ -39,6 +39,8 @@ interface ReglagesNiveau {
   stationsMin: number;
   stationsMax: number;
   toursMax: number;
+  /** Nombre de séries demandé par l'utilisateur (prioritaire s'il tient). */
+  seriesPreferees?: number;
 }
 
 const REGLAGES: Record<Niveau, ReglagesNiveau> = {
@@ -94,9 +96,11 @@ const STATIONS_MINI_COURTE = 3;
  *  séance est courte. */
 function reglagesEffectifs(parametres: ParametresSeance): ReglagesNiveau {
   const base = REGLAGES[parametres.niveau];
-  if (parametres.dureeMinutes > SEANCE_COURTE_MIN) return base;
+  const seriesPreferees = parametres.seriesParExercice ?? undefined;
+  if (parametres.dureeMinutes > SEANCE_COURTE_MIN) return { ...base, seriesPreferees };
   return {
     ...base,
+    seriesPreferees,
     series: base.series.includes(SERIES_MINI_COURTE)
       ? base.series
       : [SERIES_MINI_COURTE, ...base.series],
@@ -281,22 +285,35 @@ function construireBlocs(
   const dureeUneSerie = (exercice: Exercice, reps: number): number =>
     dureeSerieSec(exercice, repsEffectives(exercice, reps, reglages), tempo);
 
-  const possibles: Combinaison[] = [];
-  let meilleurCout = 0;
-  for (let nombre = 1; nombre <= retenus.length; nombre += 1) {
-    for (const series of reglages.series) {
-      for (const reps of reglages.reps) {
-        for (const repos of reglages.repos) {
-          let cout = 0;
-          for (let i = 0; i < nombre; i += 1) {
-            cout += series * (dureeUneSerie(retenus[i], reps) + repos);
+  const enumerer = (seriesPossibles: number[]): { possibles: Combinaison[]; meilleurCout: number } => {
+    const possibles: Combinaison[] = [];
+    let meilleurCout = 0;
+    for (let nombre = 1; nombre <= retenus.length; nombre += 1) {
+      for (const series of seriesPossibles) {
+        for (const reps of reglages.reps) {
+          for (const repos of reglages.repos) {
+            let cout = 0;
+            for (let i = 0; i < nombre; i += 1) {
+              cout += series * (dureeUneSerie(retenus[i], reps) + repos);
+            }
+            if (cout > budgetSec) continue;
+            possibles.push({ nombre, series, reps, repos, cout });
+            if (cout > meilleurCout) meilleurCout = cout;
           }
-          if (cout > budgetSec) continue;
-          possibles.push({ nombre, series, reps, repos, cout });
-          if (cout > meilleurCout) meilleurCout = cout;
         }
       }
     }
+    return { possibles, meilleurCout };
+  };
+
+  // Le nombre de séries demandé passe en premier ; s'il ne tient pas dans la
+  // durée (séance très courte, exercice unilatéral long…), on revient au
+  // choix automatique du niveau.
+  let { possibles, meilleurCout } = reglages.seriesPreferees
+    ? enumerer([reglages.seriesPreferees])
+    : enumerer(reglages.series);
+  if (possibles.length === 0 && reglages.seriesPreferees) {
+    ({ possibles, meilleurCout } = enumerer(reglages.series));
   }
 
   let choix: Combinaison;

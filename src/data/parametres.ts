@@ -34,6 +34,13 @@ export const FORMATS: { id: FormatSeance; nom: string; description: string }[] =
   { id: 'mixte', nom: 'Mixte', description: 'Séries pour la force, puis un court circuit pour finir.' },
 ];
 
+export const SERIES_PAR_EXERCICE: { valeur: 2 | 3 | 4 | null; nom: string; description: string }[] = [
+  { valeur: 3, nom: '3 séries', description: 'Recommandé : le volume de référence, l’appli ajuste le nombre d’exercices.' },
+  { valeur: 2, nom: '2 séries', description: 'Plus d’exercices différents dans le même temps.' },
+  { valeur: 4, nom: '4 séries', description: 'Moins d’exercices, plus de volume sur chacun.' },
+  { valeur: null, nom: 'Auto', description: 'L’appli choisit selon la durée disponible.' },
+];
+
 export const PARAMETRES_PAR_DEFAUT: ParametresSeance = {
   dureeMinutes: 20,
   objectif: 'complet',
@@ -42,4 +49,5 @@ export const PARAMETRES_PAR_DEFAUT: ParametresSeance = {
   tempo: { monteeSec: 5, descenteSec: 5 },
   banc: false,
   explosifs: false,
+  seriesParExercice: 3,
 };

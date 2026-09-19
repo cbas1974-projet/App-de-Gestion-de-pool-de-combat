@@ -5,7 +5,7 @@ import type {
   ProgressionSeance,
   Seance,
 } from '../types';
-import { DUREES_MINUTES, FORMATS, NIVEAUX, TEMPOS } from '../data/parametres';
+import { DUREES_MINUTES, FORMATS, NIVEAUX, SERIES_PAR_EXERCICE, TEMPOS } from '../data/parametres';
 import { EXERCICES_PAR_ID, NOM_ZONE, OBJECTIFS } from '../data/exercices';
 import {
   formaterDuree,
@@ -190,6 +190,24 @@ export default function Entrainement({ etat, onChange }: EntrainementProps) {
             {formatSelectionne && (
               <p className="text-sm text-gray-500 mt-2">{formatSelectionne.description}</p>
             )}
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-800 mb-2">Séries par exercice</p>
+            <div className="flex flex-wrap gap-2">
+              {SERIES_PAR_EXERCICE.map((option) => (
+                <Pastille
+                  key={String(option.valeur)}
+                  selectionne={parametres.seriesParExercice === option.valeur}
+                  onClick={() => mettreAJourParametres({ seriesParExercice: option.valeur })}
+                >
+                  {option.nom}
+                </Pastille>
+              ))}
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              {SERIES_PAR_EXERCICE.find((o) => o.valeur === parametres.seriesParExercice)?.description}
+            </p>
           </div>
 
           <div>

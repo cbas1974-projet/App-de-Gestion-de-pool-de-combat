@@ -126,6 +126,9 @@ export interface ParametresSeance {
   banc: boolean;
   /** Inclure les mouvements explosifs (squat sauté, swing). */
   explosifs: boolean;
+  /** Nombre de séries souhaité par exercice ; null = automatique selon la
+   *  durée. Si ce nombre ne tient pas dans la durée, l'automatique reprend. */
+  seriesParExercice: 2 | 3 | 4 | null;
 }
 
 export interface BlocSeries {

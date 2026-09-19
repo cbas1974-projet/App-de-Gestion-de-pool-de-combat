@@ -230,7 +230,7 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
     // 10 min intermédiaire : trois exercices en une série valent mieux qu'un
     // seul exercice en trois séries.
     const seance = genererSeance(
-      avec({ dureeMinutes: 10, niveau: 'intermediaire', format: 'series' }),
+      avec({ dureeMinutes: 10, niveau: 'intermediaire', format: 'series', seriesParExercice: null }),
       GRAINE,
     );
     expect(seance.blocs).toHaveLength(3);
@@ -241,12 +241,33 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
     for (const niveau of NIVEAUX) {
       for (const dureeMinutes of [5, 10]) {
         const courte = genererSeance(
-          avec({ dureeMinutes, niveau: niveau.id, format: 'series' }),
+          avec({ dureeMinutes, niveau: niveau.id, format: 'series', seriesParExercice: null }),
           GRAINE,
         );
         expect(courte.blocs[0].series).toBe(1);
       }
     }
+  });
+
+  it('respecte le nombre de séries demandé quand il tient dans la durée', () => {
+    for (const seriesParExercice of [2, 3, 4] as const) {
+      for (const dureeMinutes of [20, 30, 45]) {
+        const seance = genererSeance(
+          avec({ dureeMinutes, niveau: 'intermediaire', format: 'series', seriesParExercice }),
+          GRAINE,
+        );
+        expect(seance.blocs.length).toBeGreaterThan(0);
+        expect(seance.blocs.every((bloc) => bloc.series === seriesParExercice)).toBe(true);
+        expect(seance.dureeEstimeeSec).toBeLessThanOrEqual(dureeMinutes * 60 + 60);
+      }
+    }
+    // Par défaut : 3 séries, dès 10 min (un seul exercice alors).
+    const dix = genererSeance(avec({ dureeMinutes: 10, niveau: 'intermediaire', format: 'series' }), GRAINE);
+    expect(dix.blocs.every((bloc) => bloc.series === 3)).toBe(true);
+    // 5 min : trois séries ne tiennent pas, l'automatique reprend.
+    const cinq = genererSeance(avec({ dureeMinutes: 5, niveau: 'intermediaire', format: 'series' }), GRAINE);
+    expect(cinq.blocs.length).toBeGreaterThan(0);
+    expect(cinq.blocs[0].series).toBeLessThan(3);
   });
 
   it('garde le volume du niveau au-delà de 10 min', () => {

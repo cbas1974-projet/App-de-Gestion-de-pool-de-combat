@@ -30,6 +30,7 @@ const SEANCE: Seance = {
     tempo: TEMPO,
     banc: false,
     explosifs: false,
+    seriesParExercice: 3,
   },
   graine: 42,
   echauffementSec: 120,
