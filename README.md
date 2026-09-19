@@ -133,6 +133,16 @@ npm test
 
 Les tests unitaires couvrent le générateur de séances et la machine à étapes de la séance guidée.
 
+## Mettre en ligne (Netlify)
+
+Le build est portable (chemins relatifs) et `netlify.toml` contient les réglages.
+
+- **Sans installation** : `npm run build`, puis déposer le contenu du dossier `dist/`
+  sur https://app.netlify.com/drop. Renommer ensuite le site dans
+  « Site configuration » → « Change site name ».
+- **Automatique** : dans Netlify, « Add new site » → « Import an existing project »,
+  choisir ce dépôt GitHub et la branche. Chaque push redéploie le site.
+
 ## Créer une Application PC de Bureau
 
 Pour transformer cette application web en application PC de bureau, vous pouvez utiliser Electron:
