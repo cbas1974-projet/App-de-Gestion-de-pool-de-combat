@@ -29,13 +29,21 @@ let resultat = html.replace(
   /<link rel="stylesheet"[^>]*href="\.?\/?(assets\/[^"]+\.css)"[^>]*>/,
   (_, chemin) => `<style>${readFileSync(join(DIST, chemin), 'utf8')}</style>`,
 );
+// Le bundle n'utilise ni import/export ni import.meta : on l'exécute comme un
+// script classique placé en fin de page (après la div racine), ce qui le rend
+// compatible avec les hébergeurs et visionneuses qui ne gèrent pas les
+// modules inline.
+let scriptApplication = '';
 resultat = resultat.replace(
   /<script type="module"[^>]*src="\.?\/?(assets\/[^"]+\.js)"[^>]*><\/script>/,
   (_, chemin) => {
     const js = readFileSync(join(DIST, chemin), 'utf8').replaceAll('</script', '<\\/script');
-    return `${scriptImages}\n<script type="module">${js}</script>`;
+    scriptApplication = `${scriptImages}\n<script>${js}</script>`;
+    return '';
   },
 );
+if (!scriptApplication) throw new Error('Script de l’application introuvable dans dist/index.html');
+resultat = resultat.replace('</body>', `${scriptApplication}\n</body>`);
 
 // 3. Icône d'onglet intégrée elle aussi.
 resultat = resultat.replace(/<link rel="icon"[^>]*href="\.?\/?vite\.svg"[^>]*>/, () => {
