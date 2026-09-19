@@ -1,17 +1,26 @@
-# Vérifie, depuis un vrai navigateur, que des adresses de l'application
-# fonctionnent (onglet Entraînement, images, aucune erreur).
+# Vérifie, depuis un vrai navigateur, que les adresses publiques de
+# l'application fonctionnent (onglet Entraînement, images, aucune erreur).
+# Se déclenche à chaque modification de ce fichier ou du script de vérification.
 name: Vérifier des liens
 
 on:
+  push:
+    branches: [claude/cece-training-interface-9llm52]
+    paths:
+      - .github/workflows/verifier-lien.yml
+      - scripts/verifier_lien.mjs
   workflow_dispatch:
-    inputs:
-      urls:
-        description: Adresses à vérifier, séparées par des espaces
-        required: true
-        type: string
 
 permissions:
   contents: read
+
+env:
+  URLS: >-
+    https://rawcdn.githack.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/9a74c61429cac79e826ef65e6aa3ccdd691d67c8/SGtraining.html
+    https://raw.githack.com/cbas1974-projet/App-de-Gestion-de-pool-de-combat/publication/SGtraining.html
+    https://cdn.jsdelivr.net/gh/cbas1974-projet/App-de-Gestion-de-pool-de-combat@publication/SGtraining.html
+    https://cdn.statically.io/gh/cbas1974-projet/App-de-Gestion-de-pool-de-combat/publication/SGtraining.html
+    https://cbas1974-projet.github.io/App-de-Gestion-de-pool-de-combat/
 
 jobs:
   verifier:
@@ -24,9 +33,9 @@ jobs:
       - run: npm i --no-save playwright-core
       - name: En-têtes HTTP
         run: |
-          for u in ${{ inputs.urls }}; do
+          for u in $URLS; do
             echo "=== $u"
             curl -sS -o /dev/null -D - -L --max-time 60 "$u" | grep -i -E "^HTTP|content-type|content-length|content-security|x-frame" || true
           done
       - name: Navigateur
-        run: node scripts/verifier_lien.mjs ${{ inputs.urls }}
+        run: node scripts/verifier_lien.mjs $URLS
