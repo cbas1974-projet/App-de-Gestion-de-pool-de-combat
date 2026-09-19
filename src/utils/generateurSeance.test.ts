@@ -217,12 +217,12 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
   });
 
   it('respecte l’objectif choisi', () => {
-    const bas = genererSeance(avec({ objectif: 'bas', dureeMinutes: 45, niveau: 'avance' }), GRAINE);
+    const bas = genererSeance(avec({ zones: ['bas'], dureeMinutes: 45, niveau: 'avance' }), GRAINE);
     const zonesBas = identifiantsSeance(bas).map((id) => EXERCICES_PAR_ID[id].zone);
     expect(zonesBas.filter((zone) => zone === 'bas').length).toBeGreaterThanOrEqual(1);
     expect(zonesBas[0]).toBe('bas');
 
-    const dos = genererSeance(avec({ objectif: 'dos', dureeMinutes: 45, niveau: 'avance' }), GRAINE);
+    const dos = genererSeance(avec({ zones: ['dos'], dureeMinutes: 45, niveau: 'avance' }), GRAINE);
     expect(EXERCICES_PAR_ID[identifiantsSeance(dos)[0]].zone).toBe('dos');
   });
 
@@ -230,7 +230,7 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
     // 10 min intermédiaire : trois exercices en une série valent mieux qu'un
     // seul exercice en trois séries.
     const seance = genererSeance(
-      avec({ dureeMinutes: 10, niveau: 'intermediaire', format: 'series', seriesParExercice: null }),
+      avec({ dureeMinutes: 10, niveau: 'intermediaire', format: 'series', seriesParExercice: null, repsParSerie: null }),
       GRAINE,
     );
     expect(seance.blocs).toHaveLength(3);
@@ -241,7 +241,7 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
     for (const niveau of NIVEAUX) {
       for (const dureeMinutes of [5, 10]) {
         const courte = genererSeance(
-          avec({ dureeMinutes, niveau: niveau.id, format: 'series', seriesParExercice: null }),
+          avec({ dureeMinutes, niveau: niveau.id, format: 'series', seriesParExercice: null, repsParSerie: null }),
           GRAINE,
         );
         expect(courte.blocs[0].series).toBe(1);
@@ -309,7 +309,7 @@ describe('genererSeance : toutes les durées, niveaux et formats', () => {
     for (const niveau of NIVEAUX) {
       for (let graine = 1; graine <= 40; graine += 1) {
         const seance = genererSeance(
-          avec({ niveau: niveau.id, dureeMinutes: 45, objectif: 'complet' }),
+          avec({ niveau: niveau.id, dureeMinutes: 45 }),
           graine,
         );
         for (const bloc of seance.blocs) {

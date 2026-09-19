@@ -1,8 +1,8 @@
 import type { SeanceRealisee } from '../types';
 import { FORMATS, NIVEAUX } from '../data/parametres';
-import { EXERCICES_PAR_ID, OBJECTIFS } from '../data/exercices';
+import { EXERCICES_PAR_ID } from '../data/exercices';
 import { formaterDuree } from '../utils/generateurSeance';
-import { calculerStatistiques, formaterDateFr } from '../utils/formatage';
+import { calculerStatistiques, formaterDateFr, libelleZones } from '../utils/formatage';
 import FicheExercice from './FicheExercice';
 
 interface HistoriqueEntrainementProps {
@@ -52,7 +52,7 @@ export default function HistoriqueEntrainement({
 
           <ul className="space-y-3">
             {trie.map((realisee) => {
-              const objectif = OBJECTIFS.find((o) => o.id === realisee.parametres.objectif);
+              const zones = libelleZones(realisee.parametres);
               const niveau = NIVEAUX.find((n) => n.id === realisee.parametres.niveau);
               const format = FORMATS.find((f) => f.id === realisee.parametres.format);
 
@@ -64,7 +64,7 @@ export default function HistoriqueEntrainement({
                         {formaterDateFr(realisee.date)}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {objectif?.nom} · {format?.nom} · {niveau?.nom}
+                        {zones} · {format?.nom} · {niveau?.nom}
                       </p>
                       <p className="text-sm text-gray-600">
                         {formaterDuree(realisee.dureeReelleSec)} / {formaterDuree(realisee.dureePrevueSec)}{' '}

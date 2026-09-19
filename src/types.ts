@@ -118,7 +118,11 @@ export interface Tempo {
 
 export interface ParametresSeance {
   dureeMinutes: number;
-  objectif: Objectif;
+  /** Zones travaillées, au moins une ; plusieurs zones alternent. */
+  zones: Zone[];
+  /** Ancien réglage à objectif unique, conservé pour lire les séances
+   *  enregistrées avant l'arrivée des zones. */
+  objectif?: Objectif;
   niveau: Niveau;
   format: FormatSeance;
   tempo: Tempo;
@@ -129,6 +133,9 @@ export interface ParametresSeance {
   /** Nombre de séries souhaité par exercice ; null = automatique selon la
    *  durée. Si ce nombre ne tient pas dans la durée, l'automatique reprend. */
   seriesParExercice: 2 | 3 | 4 | null;
+  /** Répétitions souhaitées par série ; null = automatique selon le niveau.
+   *  Si ce nombre ne tient pas dans la durée, l'automatique reprend. */
+  repsParSerie: 6 | 8 | 9 | 10 | 12 | null;
 }
 
 export interface BlocSeries {

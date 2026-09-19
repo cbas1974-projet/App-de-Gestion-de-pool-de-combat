@@ -2,10 +2,22 @@ import type {
   AppState,
   EntrainementState,
   Fighter,
+  Objectif,
+  ParametresSeance,
   Pool,
   ValidationRules,
+  Zone,
 } from '../types';
-import { PARAMETRES_PAR_DEFAUT } from '../data/parametres';
+import { PARAMETRES_PAR_DEFAUT, TOUTES_LES_ZONES } from '../data/parametres';
+
+/** Correspondance entre l'ancien objectif unique et les zones. */
+const ZONES_PAR_OBJECTIF: Record<Objectif, Zone[]> = {
+  complet: TOUTES_LES_ZONES,
+  haut: ['haut'],
+  bas: ['bas'],
+  gainage: ['gainage'],
+  dos: ['dos'],
+};
 
 const STORAGE_KEY = 'combat-pool-manager';
 
@@ -30,6 +42,18 @@ const defaultState: AppState = {
   entrainement: defaultEntrainement,
 };
 
+/** Complète des paramètres sauvegardés : valeurs par défaut des nouveaux
+ *  réglages, et conversion de l'ancien objectif unique en zones. */
+const migrerParametres = (sauvegardes: Partial<ParametresSeance>): ParametresSeance => {
+  const zones =
+    sauvegardes.zones && sauvegardes.zones.length > 0
+      ? sauvegardes.zones
+      : sauvegardes.objectif
+        ? ZONES_PAR_OBJECTIF[sauvegardes.objectif]
+        : PARAMETRES_PAR_DEFAUT.zones;
+  return { ...PARAMETRES_PAR_DEFAUT, ...sauvegardes, zones: [...zones] };
+};
+
 /** Complète un état sauvegardé par une version antérieure de l'application. */
 const migrer = (sauvegarde: Partial<AppState>): AppState => {
   const entrainement: Partial<EntrainementState> = sauvegarde.entrainement ?? {};
@@ -39,10 +63,7 @@ const migrer = (sauvegarde: Partial<AppState>): AppState => {
     entrainement: {
       ...defaultEntrainement,
       ...entrainement,
-      parametres: {
-        ...PARAMETRES_PAR_DEFAUT,
-        ...(entrainement.parametres ?? {}),
-      },
+      parametres: migrerParametres(entrainement.parametres ?? {}),
     },
   };
 };

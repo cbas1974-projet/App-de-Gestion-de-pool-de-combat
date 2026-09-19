@@ -5,15 +5,23 @@ import type {
   ProgressionSeance,
   Seance,
 } from '../types';
-import { DUREES_MINUTES, FORMATS, NIVEAUX, SERIES_PAR_EXERCICE, TEMPOS } from '../data/parametres';
-import { EXERCICES_PAR_ID, NOM_ZONE, OBJECTIFS } from '../data/exercices';
+import {
+  DUREES_MINUTES,
+  FORMATS,
+  NIVEAUX,
+  REPS_PAR_SERIE,
+  SERIES_PAR_EXERCICE,
+  TEMPOS,
+  TOUTES_LES_ZONES,
+} from '../data/parametres';
+import { EXERCICES_PAR_ID, NOM_ZONE, ZONES } from '../data/exercices';
 import {
   formaterDuree,
   genererSeance,
   libelleBloc,
   remplacerExercice,
 } from '../utils/generateurSeance';
-import { formaterDateFr, graineAleatoire, messageErreur } from '../utils/formatage';
+import { formaterDateFr, graineAleatoire, libelleZones, messageErreur } from '../utils/formatage';
 import SeanceGuidee from './SeanceGuidee';
 import FicheExercice from './FicheExercice';
 import HistoriqueEntrainement from './HistoriqueEntrainement';
@@ -64,7 +72,24 @@ export default function Entrainement({ etat, onChange }: EntrainementProps) {
     onChange((prec) => ({ ...prec, parametres: { ...prec.parametres, ...partiel } }));
   };
 
-  const objectifSelectionne = OBJECTIFS.find((o) => o.id === parametres.objectif);
+  const toutesZones = parametres.zones.length >= TOUTES_LES_ZONES.length;
+  const basculerZone = (zone: (typeof TOUTES_LES_ZONES)[number]) => {
+    // Depuis « tout le corps », choisir une zone cible cette zone seule ;
+    // retirer la dernière zone ramène à tout le corps.
+    if (toutesZones) {
+      mettreAJourParametres({ zones: [zone] });
+      return;
+    }
+    const zones = parametres.zones.includes(zone)
+      ? parametres.zones.filter((z) => z !== zone)
+      : [...parametres.zones, zone];
+    mettreAJourParametres({ zones: zones.length > 0 ? zones : [...TOUTES_LES_ZONES] });
+  };
+  const descriptionZones = toutesZones
+    ? 'Toutes les zones en alternance : jambes, haut du corps, dos, gainage, corps entier.'
+    : parametres.zones.length === 1
+      ? `Séance ciblée : ${libelleZones(parametres)}.`
+      : `En alternance : ${libelleZones(parametres)}.`;
   const niveauSelectionne = NIVEAUX.find((n) => n.id === parametres.niveau);
   const formatSelectionne = FORMATS.find((f) => f.id === parametres.format);
 
@@ -139,21 +164,25 @@ export default function Entrainement({ etat, onChange }: EntrainementProps) {
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-2">Objectif</p>
+            <p className="font-semibold text-gray-800 mb-2">Zones travaillées</p>
             <div className="flex flex-wrap gap-2">
-              {OBJECTIFS.map((o) => (
+              <Pastille
+                selectionne={toutesZones}
+                onClick={() => mettreAJourParametres({ zones: [...TOUTES_LES_ZONES] })}
+              >
+                Tout le corps
+              </Pastille>
+              {ZONES.map((z) => (
                 <Pastille
-                  key={o.id}
-                  selectionne={parametres.objectif === o.id}
-                  onClick={() => mettreAJourParametres({ objectif: o.id })}
+                  key={z.id}
+                  selectionne={!toutesZones && parametres.zones.includes(z.id)}
+                  onClick={() => basculerZone(z.id)}
                 >
-                  {o.nom}
+                  {z.nom}
                 </Pastille>
               ))}
             </div>
-            {objectifSelectionne && (
-              <p className="text-sm text-gray-500 mt-2">{objectifSelectionne.description}</p>
-            )}
+            <p className="text-sm text-gray-500 mt-2">{descriptionZones}</p>
           </div>
 
           <div>
@@ -207,6 +236,24 @@ export default function Entrainement({ etat, onChange }: EntrainementProps) {
             </div>
             <p className="text-sm text-gray-500 mt-2">
               {SERIES_PAR_EXERCICE.find((o) => o.valeur === parametres.seriesParExercice)?.description}
+            </p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-800 mb-2">Répétitions par série</p>
+            <div className="flex flex-wrap gap-2">
+              {REPS_PAR_SERIE.map((option) => (
+                <Pastille
+                  key={String(option.valeur)}
+                  selectionne={parametres.repsParSerie === option.valeur}
+                  onClick={() => mettreAJourParametres({ repsParSerie: option.valeur })}
+                >
+                  {option.nom}
+                </Pastille>
+              ))}
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              {REPS_PAR_SERIE.find((o) => o.valeur === parametres.repsParSerie)?.description}
             </p>
           </div>
 

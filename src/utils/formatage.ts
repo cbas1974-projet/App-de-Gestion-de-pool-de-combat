@@ -1,7 +1,19 @@
 // Petits utilitaires de formatage pour l'onglet Entraînement.
 // Ce fichier ne contient volontairement aucun composant (voir la règle
 // ESLint react-refresh/only-export-components sur les fichiers .tsx).
-import type { SeanceRealisee } from '../types';
+import type { ParametresSeance, SeanceRealisee } from '../types';
+import { OBJECTIFS, ZONES } from '../data/exercices';
+
+/** Libellé des zones d'une séance : « Corps entier », « Bas du corps » ou
+ *  « Bas du corps + Dos » ; lit l'ancien objectif des séances plus anciennes. */
+export const libelleZones = (parametres: ParametresSeance): string => {
+  const zones = parametres.zones ?? [];
+  if (zones.length === 0) {
+    return OBJECTIFS.find((o) => o.id === parametres.objectif)?.nom ?? 'Corps entier';
+  }
+  if (zones.length >= ZONES.length) return 'Corps entier';
+  return ZONES.filter((z) => zones.includes(z.id)).map((z) => z.nom).join(' + ');
+};
 
 /** Formate une date ISO en français, lisible sur mobile (ex. "18/09/2026 14:32"). */
 export const formaterDateFr = (dateIso: string): string => {

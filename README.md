@@ -40,7 +40,8 @@ Pour le pratiquant de jiu-jitsu qui s'entraîne aux haltères, utilisable au té
 
 **Nouvelle séance**
 - Choix de la durée (5, 10, 15, 20, 30 ou 45 minutes)
-- Objectif : Corps entier, Haut du corps, Bas du corps, Gainage, Dos
+- Zones travaillées : tout le corps, ou une combinaison de Haut du corps, Bas du corps, Dos, Gainage, Corps entier (plusieurs zones alternent)
+- Séries par exercice (3 par défaut) et répétitions par série (8 par défaut), l'appli ajuste le nombre d'exercices
 - Niveau : Débutant, Intermédiaire, Avancé
 - Format : Séries (répétitions avec repos chronométré), Circuit (stations au temps), Mixte
 - Tempo personnalisable (5 s / 5 s recommandé pour protéger tendons et ligaments, 3 s / 3 s, 2 s / 4 s)
@@ -273,7 +274,7 @@ Une fois tous les combats terminés, le podium s'affiche avec:
 1. Accédez à l'onglet "Entraînement"
 2. Dans "Nouvelle séance":
    - Choisissez la durée (5 à 45 minutes)
-   - Sélectionnez l'objectif (Corps entier, Haut, Bas, Gainage, Dos)
+   - Choisissez les zones à travailler, une ou plusieurs
    - Indiquez votre niveau (Débutant, Intermédiaire, Avancé)
    - Choisissez le format (Séries, Circuit ou Mixte)
    - Réglez le tempo recommandé (5 s / 5 s pour protéger vos tendons)

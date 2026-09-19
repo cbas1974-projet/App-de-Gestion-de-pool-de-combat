@@ -41,6 +41,8 @@ interface ReglagesNiveau {
   toursMax: number;
   /** Nombre de séries demandé par l'utilisateur (prioritaire s'il tient). */
   seriesPreferees?: number;
+  /** Répétitions demandées par l'utilisateur (prioritaires si elles tiennent). */
+  repsPreferees?: number;
 }
 
 const REGLAGES: Record<Niveau, ReglagesNiveau> = {
@@ -97,10 +99,12 @@ const STATIONS_MINI_COURTE = 3;
 function reglagesEffectifs(parametres: ParametresSeance): ReglagesNiveau {
   const base = REGLAGES[parametres.niveau];
   const seriesPreferees = parametres.seriesParExercice ?? undefined;
-  if (parametres.dureeMinutes > SEANCE_COURTE_MIN) return { ...base, seriesPreferees };
+  const repsPreferees = parametres.repsParSerie ?? undefined;
+  if (parametres.dureeMinutes > SEANCE_COURTE_MIN) return { ...base, seriesPreferees, repsPreferees };
   return {
     ...base,
     seriesPreferees,
+    repsPreferees,
     series: base.series.includes(SERIES_MINI_COURTE)
       ? base.series
       : [SERIES_MINI_COURTE, ...base.series],
@@ -120,6 +124,17 @@ const CYCLES_ZONES: Record<Objectif, Zone[]> = {
   gainage: ['gainage', 'complet', 'gainage', 'bas', 'gainage', 'dos'],
   dos: ['dos', 'gainage', 'dos', 'bas', 'dos', 'haut'],
 };
+
+/** Ordre d'alternance des zones choisies par l'utilisateur. */
+const ORDRE_ZONES: Zone[] = ['bas', 'haut', 'dos', 'gainage', 'complet'];
+
+/** Cycle de zones d'une séance : les zones choisies, dans l'ordre
+ *  d'alternance ; à défaut, l'ancien cycle par objectif. */
+function cycleZones(parametres: ParametresSeance): Zone[] {
+  const choisies = parametres.zones ?? [];
+  if (choisies.length > 0) return ORDRE_ZONES.filter((zone) => choisies.includes(zone));
+  return CYCLES_ZONES[parametres.objectif ?? 'complet'];
+}
 
 /** Repos entre deux tours de circuit. */
 const REPOS_ENTRE_TOURS_SEC = 60;
@@ -285,12 +300,15 @@ function construireBlocs(
   const dureeUneSerie = (exercice: Exercice, reps: number): number =>
     dureeSerieSec(exercice, repsEffectives(exercice, reps, reglages), tempo);
 
-  const enumerer = (seriesPossibles: number[]): { possibles: Combinaison[]; meilleurCout: number } => {
+  const enumerer = (
+    seriesPossibles: number[],
+    repsPossibles: number[],
+  ): { possibles: Combinaison[]; meilleurCout: number } => {
     const possibles: Combinaison[] = [];
     let meilleurCout = 0;
     for (let nombre = 1; nombre <= retenus.length; nombre += 1) {
       for (const series of seriesPossibles) {
-        for (const reps of reglages.reps) {
+        for (const reps of repsPossibles) {
           for (const repos of reglages.repos) {
             let cout = 0;
             for (let i = 0; i < nombre; i += 1) {
@@ -306,14 +324,20 @@ function construireBlocs(
     return { possibles, meilleurCout };
   };
 
-  // Le nombre de séries demandé passe en premier ; s'il ne tient pas dans la
-  // durée (séance très courte, exercice unilatéral long…), on revient au
-  // choix automatique du niveau.
-  let { possibles, meilleurCout } = reglages.seriesPreferees
-    ? enumerer([reglages.seriesPreferees])
-    : enumerer(reglages.series);
-  if (possibles.length === 0 && reglages.seriesPreferees) {
-    ({ possibles, meilleurCout } = enumerer(reglages.series));
+  // Les séries et répétitions demandées passent en premier ; si elles ne
+  // tiennent pas dans la durée (séance très courte, exercice unilatéral
+  // long…), on relâche d'abord les répétitions, puis les séries, puis tout.
+  const { seriesPreferees, repsPreferees } = reglages;
+  const essais: [number[], number[]][] = [];
+  if (seriesPreferees && repsPreferees) essais.push([[seriesPreferees], [repsPreferees]]);
+  if (seriesPreferees) essais.push([[seriesPreferees], reglages.reps]);
+  if (repsPreferees) essais.push([reglages.series, [repsPreferees]]);
+  essais.push([reglages.series, reglages.reps]);
+  let possibles: Combinaison[] = [];
+  let meilleurCout = 0;
+  for (const [seriesPossibles, repsPossibles] of essais) {
+    ({ possibles, meilleurCout } = enumerer(seriesPossibles, repsPossibles));
+    if (possibles.length > 0) break;
   }
 
   let choix: Combinaison;
@@ -323,7 +347,7 @@ function construireBlocs(
     choix = {
       nombre: 1,
       series: 1,
-      reps: Math.min(...reglages.reps),
+      reps: reglages.repsPreferees ?? Math.min(...reglages.reps),
       repos: Math.min(...reglages.repos),
       cout: 0,
     };
@@ -401,7 +425,7 @@ export function genererSeance(parametres: ParametresSeance, graine?: number): Se
   const retourCalme = retourCalmeSec(parametres.dureeMinutes);
   const budget = Math.max(0, parametres.dureeMinutes * 60 - echauffement - retourCalme);
   const candidats = exercicesDisponibles(parametres);
-  const cycle = CYCLES_ZONES[parametres.objectif];
+  const cycle = cycleZones(parametres);
 
   let blocs: BlocSeries[] = [];
   let circuit: Circuit | null = null;
@@ -420,9 +444,10 @@ export function genererSeance(parametres: ParametresSeance, graine?: number): Se
     blocs = construireBlocs(retenus, budgetSeries, reglages, parametres.tempo);
     const utilises = new Set(blocs.map((b) => b.exerciceId));
     const restants = candidats.filter((e) => !utilises.has(e.id));
+    const cycleCircuit = CYCLE_CIRCUIT_MIXTE.filter((zone) => cycle.includes(zone));
     const stations = selectionnerExercices(
       restants,
-      CYCLE_CIRCUIT_MIXTE,
+      cycleCircuit.length > 0 ? cycleCircuit : cycle,
       BORNES_CIRCUIT_MIXTE.stationsMax,
       alea,
     );
@@ -456,7 +481,7 @@ function adapterReps(
   reglages: ReglagesNiveau,
 ): number {
   if (remplacant.unite === uniteActuelle) return repsActuelles;
-  return remplacant.unite === 'secondes' ? reglages.tenueSec : reglages.reps[0];
+  return remplacant.unite === 'secondes' ? reglages.tenueSec : (reglages.repsPreferees ?? reglages.reps[0]);
 }
 
 /** Remplace un exercice (bloc ou station) par un autre de la même zone. */
