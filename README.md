@@ -1,0 +1,1 @@
+Branche de publication : version « fichier unique » de l'application (styles, script et images intégrés), produite par `npm run build:unique` sur la branche claude/cece-training-interface-9llm52. Publiée à la demande de l'auteur du dépôt pour le déploiement Netlify.
