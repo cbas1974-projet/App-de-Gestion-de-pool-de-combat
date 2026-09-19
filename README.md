@@ -133,6 +133,15 @@ npm test
 
 Les tests unitaires couvrent le générateur de séances et la machine à étapes de la séance guidée.
 
+## Mettre en ligne (GitHub Pages)
+
+Le workflow `.github/workflows/pages.yml` construit l'application à chaque push de la
+branche de travail et publie le résultat sur la branche `gh-pages`. Une seule
+activation manuelle est nécessaire, une fois : dans GitHub, « Settings » → « Pages » →
+« Build and deployment » → Source « Deploy from a branch », branche `gh-pages`,
+dossier `/ (root)`, puis « Save ». Adresse du site :
+https://cbas1974-projet.github.io/App-de-Gestion-de-pool-de-combat/
+
 ## Mettre en ligne (Netlify)
 
 Le build est portable (chemins relatifs) et `netlify.toml` contient les réglages.
