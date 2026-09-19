@@ -1,0 +1,32 @@
+# Vérifie, depuis un vrai navigateur, que des adresses de l'application
+# fonctionnent (onglet Entraînement, images, aucune erreur).
+name: Vérifier des liens
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: Adresses à vérifier, séparées par des espaces
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i --no-save playwright-core
+      - name: En-têtes HTTP
+        run: |
+          for u in ${{ inputs.urls }}; do
+            echo "=== $u"
+            curl -sS -o /dev/null -D - -L --max-time 60 "$u" | grep -i -E "^HTTP|content-type|content-length|content-security|x-frame" || true
+          done
+      - name: Navigateur
+        run: node scripts/verifier_lien.mjs ${{ inputs.urls }}
