@@ -835,11 +835,19 @@ export const OBJECTIFS: { id: Objectif; nom: string; description: string }[] = [
   { id: 'dos', nom: 'Dos', description: 'Tirages et haut du dos, avec un peu de gainage et de jambes.' },
 ];
 
+/** Images intégrées directement dans la page (version « fichier unique »
+ *  produite par scripts/construire_fichier_unique.mjs) : identifiant → data URI.
+ *  Absent dans la version normale, où les images sont des fichiers séparés. */
+const IMAGES_INTEGREES: Record<string, string> | undefined = (
+  globalThis as { __IMAGES_EXERCICES__?: Record<string, string> }
+).__IMAGES_EXERCICES__;
+
 /** Chemin public d'une vignette d'exercice (respecte la base Vite). */
 export const cheminImage = (exerciceId: string): string =>
-  `${import.meta.env.BASE_URL}exercices/${exerciceId}.png`;
+  IMAGES_INTEGREES?.[exerciceId] ?? `${import.meta.env.BASE_URL}exercices/${exerciceId}.png`;
 
-export const CHEMIN_POSTER = `${import.meta.env.BASE_URL}exercices/_poster.jpg`;
+export const CHEMIN_POSTER =
+  IMAGES_INTEGREES?.['_poster'] ?? `${import.meta.env.BASE_URL}exercices/_poster.jpg`;
 
 export interface MouvementLibre {
   nom: string;
