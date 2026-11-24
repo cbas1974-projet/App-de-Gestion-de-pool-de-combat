@@ -103,13 +103,20 @@ Valeurs de départ pour le BJJ (toutes réglables) :
 
 Valeurs de départ pour le sparring Muay Thai / Kickboxing (3 rounds) :
 
-| Tranche | Round | Repos entre les rounds |
-|---|---|---|
-| Plus jeunes (≤ 8 ans, à confirmer) | 1 min 30 | 1 min (à confirmer) |
-| Plus vieux (9-11 ans, à confirmer) | 2 min | 1 min (à confirmer) |
-| Ados (12 ans et plus) | 3 min | 1 min (à confirmer) |
+| Tranche | Round | Repos entre les rounds | Durée totale d'un combat |
+|---|---|---|---|
+| 6-8 ans | 1 min 30 | 30 s | 5 min 30 |
+| 9-11 ans | 2 min | 45 s | 7 min 30 |
+| 12 ans et plus | 3 min | 1 min | 11 min |
 
 Quand une pool chevauche deux tranches, **c'est la durée du plus jeune qui s'applique**.
+
+### 5.4 Durées modulables selon la journée
+
+Les durées (rounds, repos, prolongation, changement entre les combats) sont des réglages que l'organisateur ajuste selon le temps disponible et le nombre de combats.
+
+- **Impact en direct** : à chaque changement, l'app affiche l'heure de fin estimée de chaque surface. Par exemple, « Surface 2 : fin vers 15 h 40 → 15 h 10 si repos à 30 s ».
+- **Ajustement en bloc** : on peut ajuster toute une discipline d'un coup (par exemple « repos +15 s partout ») ou une seule tranche.
 
 ### 5.3 Fonctionnement
 
@@ -200,10 +207,7 @@ Les étapes 1 et 2 couvrent déjà le travail de préparation des pools (régler
 
 ## 12. Points ouverts
 
-- **Sparring** :
-  - âges limites exacts des 3 durées ;
-  - repos entre les rounds ;
-  - règle en cas d'égalité.
+- **Sparring** : règle en cas d'égalité.
 - **Adultes** : combattent-ils ? Si oui, avec quels réglages ?
 - **`grade_rang`** : sens exact, à confirmer dans `grade_cellule.py`.
 - **Noms exacts** des codes de sparring niveaux 2 et 3, et de la future colonne `sexe`.
