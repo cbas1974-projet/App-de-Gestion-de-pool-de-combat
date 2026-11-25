@@ -100,14 +100,16 @@ Valeurs de départ pour le BJJ (toutes réglables) :
 | 11-12 ans | 2 ans | 10 % | ensemble | 2 min 30 |
 | 13 ans | 2 ans | 12 % | séparés | 2 min 30 |
 | 14-17 ans | 2 ans | 12 % | séparés | 3 min |
+| Adultes (18 ans et plus) | aucun écart d'âge | 12 % | séparés | 3 min |
 
 Valeurs de départ pour le sparring Muay Thai / Kickboxing (3 rounds) :
 
 | Tranche | Round | Repos entre les rounds | Durée totale d'un combat |
 |---|---|---|---|
-| 6-8 ans | 1 min 30 | 30 s | 5 min 30 |
-| 9-11 ans | 2 min | 45 s | 7 min 30 |
-| 12 ans et plus | 3 min | 1 min | 11 min |
+| 6-8 ans | 1 min | 30 s | 4 min |
+| 9-11 ans | 1 min 30 | 45 s | 6 min |
+| 12-17 ans | 2 min | 1 min | 8 min |
+| Adultes (18 ans et plus) | 3 min | 1 min | 11 min |
 
 Quand une pool chevauche deux tranches, **c'est la durée du plus jeune qui s'applique**.
 
@@ -208,7 +210,6 @@ Les étapes 1 et 2 couvrent déjà le travail de préparation des pools (régler
 ## 12. Points ouverts
 
 - **Sparring** : règle en cas d'égalité.
-- **Adultes** : combattent-ils ? Si oui, avec quels réglages ?
 - **`grade_rang`** : sens exact, à confirmer dans `grade_cellule.py`.
 - **Noms exacts** des codes de sparring niveaux 2 et 3, et de la future colonne `sexe`.
 - **CSV de test** avec des données fictives, pour le développement.
