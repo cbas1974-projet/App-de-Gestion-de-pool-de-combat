@@ -113,14 +113,14 @@ Valeurs de départ pour le sparring Muay Thai / Kickboxing (3 rounds) :
 
 Quand une pool chevauche deux tranches, **c'est la durée du plus jeune qui s'applique**.
 
-### 5.4 Durées modulables selon la journée
+### 5.3 Durées modulables selon la journée
 
 Les durées (rounds, repos, prolongation, changement entre les combats) sont des réglages que l'organisateur ajuste selon le temps disponible et le nombre de combats.
 
 - **Impact en direct** : à chaque changement, l'app affiche l'heure de fin estimée de chaque surface. Par exemple, « Surface 2 : fin vers 15 h 40 → 15 h 10 si repos à 30 s ».
 - **Ajustement en bloc** : on peut ajuster toute une discipline d'un coup (par exemple « repos +15 s partout ») ou une seule tranche.
 
-### 5.3 Fonctionnement
+### 5.4 Fonctionnement
 
 1. **Partition stricte** : par discipline (et niveau de sparring), puis par sexe si la tranche l'exige.
 2. **Regroupement** :
